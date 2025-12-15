@@ -190,11 +190,11 @@ public class MultiChat extends Behavior<Villager> {
     }
 
     /**
-     * 判断目标村民是否空闲
+     * 判断目标村民可以聊天
      */
     private boolean isAvailable(Villager v) {
-        // 对方没有在聊天状态，且没有在忙其他高优先级的事情
-        return !v.getBrain().hasMemoryValue(RumorMemoryTypes.CHAT_TARGET.get());
+        // 判断是否在搜寻状态
+        return v.getBrain().isMemoryValue(RumorMemoryTypes.CHAT_STATUS.get(), ChatStatus.SEARCHING);
     }
 
     /**
