@@ -1,6 +1,7 @@
 package dev.rhizome.rumor;
 
 import com.mojang.logging.LogUtils;
+import dev.rhizome.rumor.ai.memory.RumorMemoryTypes;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -23,6 +24,8 @@ public class Rumor {
 
     public Rumor() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+        RumorMemoryTypes.register(modEventBus);
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
