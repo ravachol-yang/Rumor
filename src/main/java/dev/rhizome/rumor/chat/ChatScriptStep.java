@@ -1,0 +1,10 @@
+package dev.rhizome.rumor.chat;
+
+/**
+ * 对话剧本中的一个步骤
+ * @param speakerId 当前说话者的id
+ * @param text 说话内容
+ * @param tickNode 当前步骤执行的时间节点
+ */
+public record ChatScriptStep(String speakerId, String text, int tickNode) {
+}

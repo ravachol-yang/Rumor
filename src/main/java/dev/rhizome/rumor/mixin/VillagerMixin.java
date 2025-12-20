@@ -30,9 +30,7 @@ public class VillagerMixin {
                 new ImmutableList.Builder<MemoryModuleType<?>>()
                         .addAll(MEMORY_TYPES)
                         .add(RumorMemoryTypes.CHAT_STATUS.get())
-                        .add(RumorMemoryTypes.CHAT_TARGET.get())
-                        .add(RumorMemoryTypes.IS_CHAT_LEADER.get())
-                        .add(RumorMemoryTypes.CHAT_LEADER.get())
+                        .add(RumorMemoryTypes.CHAT_CONTEXT.get())
                         .add(RumorMemoryTypes.LAST_CHAT_TIME.get())
                         .build(),
                 SENSOR_TYPES));
