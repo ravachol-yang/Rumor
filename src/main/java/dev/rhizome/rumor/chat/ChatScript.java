@@ -15,14 +15,14 @@ import java.util.stream.Collectors;
  * @param weight 随机选择剧本时的权重
  * @param searchRange 搜索成员的范围 (输入null为默认)
  * @param uniqueIds 不重复的角色列表，用于判断所需人数和分配角色 (输入null自动计算)
- * @param totalDuration 总时长，用于判断何时结束 (输入null自动计算)
+ * @param totalTicks 总时长，用于判断何时结束 (输入null自动计算)
  */
 public record ChatScript(String id,
                          List<ChatScriptStep> steps,
                          int weight,
                          Double searchRange,
                          Set<String> uniqueIds,
-                         int totalDuration) {
+                         int totalTicks) {
 
     /**
      * 构建从剧本步骤的列表一个剧本
@@ -51,7 +51,7 @@ public record ChatScript(String id,
         // 根据tick序列进行排序
         // 不重要但是也许真的会有人把顺序乱排()
         // 还是重新加工一下吧
-        steps.sort(Comparator.comparingInt(ChatScriptStep::tickNode));
+        steps.sort(Comparator.comparingInt(ChatScriptStep::triggerTick));
 
         // 计算不重复的角色数量
         if (uniqueIds == null) {
@@ -61,8 +61,8 @@ public record ChatScript(String id,
         }
 
         // 计算总时长，加一点点缓冲
-        if (!steps.isEmpty() && totalDuration <= 0) {
-            totalDuration = steps.get(steps.size() - 1).tickNode() + 30;
+        if (!steps.isEmpty() && totalTicks <= 0) {
+            totalTicks = steps.get(steps.size() - 1).triggerTick() + 30;
         }
     }
 }

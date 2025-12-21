@@ -2,9 +2,9 @@
   "id": "default_monologue",
   "weight": 10,
   "steps": [
-    {"speakerId": "self", "text":  "mono 111", "tickNode":  20},
-    {"speakerId": "self", "text":  "mono 222", "tickNode":  60},
-    {"speakerId": "self", "text":  "mono 333", "tickNode":  100, "broadcastRange":  16},
-    {"speakerId": "self", "text":  "mono 444", "tickNode":  120}
+    {"speakerId": "self", "text":  "mono 111", "triggerTick":  20},
+    {"speakerId": "self", "text":  "mono 222", "triggerTick":  60},
+    {"speakerId": "self", "text":  "mono 333", "triggerTick":  100, "broadcastRange":  16},
+    {"speakerId": "self", "text":  "mono 444", "triggerTick":  120}
   ]
 }

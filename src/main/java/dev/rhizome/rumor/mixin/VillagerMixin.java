@@ -1,7 +1,7 @@
 package dev.rhizome.rumor.mixin;
 
 import com.google.common.collect.ImmutableList;
-import dev.rhizome.rumor.ai.behavior.MultiChat;
+import dev.rhizome.rumor.ai.behavior.VillagerChat;
 import dev.rhizome.rumor.ai.memory.RumorMemoryTypes;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -38,6 +38,6 @@ public class VillagerMixin {
 
     @Inject(method = "registerBrainGoals", at = @At("TAIL"))
     private void injectBehavior (Brain<Villager> pVillagerBrain, CallbackInfo ci) {
-        pVillagerBrain.addActivity(Activity.IDLE,5, ImmutableList.of(new MultiChat()));
+        pVillagerBrain.addActivity(Activity.IDLE,5, ImmutableList.of(new VillagerChat()));
     }
 }

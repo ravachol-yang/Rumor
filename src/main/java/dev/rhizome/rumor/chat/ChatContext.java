@@ -41,7 +41,7 @@ public class ChatContext {
     public void tick() {
         chatTimer++;
         // 时间到达后标记结束
-        if (chatTimer >= script.totalDuration()) {
+        if (chatTimer >= script.totalTicks()) {
             active = false;
             finished = true;
         }

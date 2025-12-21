@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import java.util.List;
 import java.util.Optional;
 
-public class MultiChat extends Behavior<Villager> {
+public class VillagerChat extends Behavior<Villager> {
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
@@ -169,7 +169,7 @@ public class MultiChat extends Behavior<Villager> {
                 } else ready = false;
             }
 
-            if (ready) ctx.start();
+            if (ready) LOGGER.debug("close enough, start chatting"); ctx.start();
         }
 
         // 对话过程
@@ -185,7 +185,7 @@ public class MultiChat extends Behavior<Villager> {
             ChatScriptStep step = ctx.getCurrentStep();
 
             // 当前步骤的tick为当前tick，需要推进
-            if (step != null && step.tickNode() == ctx.getCurrentTick()) {
+            if (step != null && step.triggerTick() == ctx.getCurrentTick()) {
 
                 // 如果轮到自己，就发言
                 if (pOwner == ctx.getMemberMap().get(step.speakerId())) {
@@ -295,7 +295,7 @@ public class MultiChat extends Behavior<Villager> {
         }
     }
 
-    public MultiChat() {
+    public VillagerChat() {
 
         // 该行为需要的Memory状态 (pEntryCondition) 和最大行为时长
         super(ImmutableMap.of(
