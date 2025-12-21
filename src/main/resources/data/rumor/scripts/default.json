@@ -1,0 +1,11 @@
+{
+  "id": "default",
+  "weight": 100,
+  "searchRange": 30,
+  "steps": [
+    {"speakerId": "leader", "text":  "111", "tickNode":  20},
+    {"speakerId": "v0", "text":  "222", "tickNode":  60},
+    {"speakerId": "v1", "text":  "333", "tickNode":  100},
+    {"speakerId": "leader", "text":  "444", "tickNode":  120}
+  ]
+}

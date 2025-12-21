@@ -67,6 +67,7 @@ public class ChatContext {
     /**
      * 同一个对话过程中所有成员共用的上下文
      * 应当有组长创建并分配，最后各自销毁
+     * @param members 对话成员
      * @param script 使用的剧本
      */
     public ChatContext(List<Villager> members, ChatScript script) {

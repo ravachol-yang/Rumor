@@ -2,7 +2,10 @@ package dev.rhizome.rumor;
 
 import com.mojang.logging.LogUtils;
 import dev.rhizome.rumor.ai.memory.RumorMemoryTypes;
+import dev.rhizome.rumor.chat.ChatScriptManager;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -29,6 +32,9 @@ public class Rumor {
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
+
+        // 注册资源加载监听器
+        MinecraftForge.EVENT_BUS.addListener(this::onAddReloadListeners);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
@@ -42,6 +48,13 @@ public class Rumor {
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
 
+    }
+
+    // 在游戏启动和运行 /reload 命令时触发
+    @SubscribeEvent
+    public void onAddReloadListeners(AddReloadListenerEvent event) {
+        // 注册剧本管理器
+        event.addListener(new ChatScriptManager());
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
