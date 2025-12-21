@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.logging.LogUtils;
 import dev.rhizome.rumor.ai.memory.RumorMemoryTypes;
 import dev.rhizome.rumor.chat.*;
+import dev.rhizome.rumor.config.RumorConfig;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,10 +26,13 @@ public class MultiChat extends Behavior<Villager> {
 
     private static final double INTERACT_DIST = 2.5D; // 开始对话的距离
 
-    // 对话总时长
+    // 村民可随机被选为搜索状态的间隔，单位: tick
+    private static final int ELECTION_INTERVAL_TICK = RumorConfig.ELECTION_INTERVAL.get() * 20;
+
+    // 对话总时长，单位: tick
     private static final int MAX_CHAT_DURATION = 3000;
-    // 冷却时间
-    private static final int COOLDOWN_DURATION = 6000;
+    // 冷却时间, 单位: tick
+    private static final int COOLDOWN_TICKS = RumorConfig.COOLDOWN.get() * 20;
 
     /**
      * 检查行为启动条件
@@ -45,7 +49,7 @@ public class MultiChat extends Behavior<Villager> {
         // 冷却状态，时间足够，更新为等待，否则继续冷却
         if (status == ChatStatus.COOLDOWN) {
             Optional<Long> lastChatTime = pOwner.getBrain().getMemory(RumorMemoryTypes.LAST_CHAT_TIME.get());
-            if (lastChatTime.isPresent() && pLevel.getGameTime() - lastChatTime.get() >= COOLDOWN_DURATION) {
+            if (lastChatTime.isPresent() && pLevel.getGameTime() - lastChatTime.get() >= COOLDOWN_TICKS) {
                 // 时间足够，设置为等待
                 pOwner.getBrain().setMemory(RumorMemoryTypes.CHAT_STATUS.get(),ChatStatus.WAITING);
             }
@@ -61,8 +65,8 @@ public class MultiChat extends Behavior<Villager> {
         if (status == ChatStatus.WAITING) {
 
             // 有极低的概率，选中此人为对话发起者
-            // 每100个tick（5秒）允许进入一次判定，否则被选中的概率还是太高
-            if (pLevel.getGameTime() % 100 == 0 && pLevel.random.nextFloat() < 0.01F) {
+            // 每隔至少5秒允许进入一次判定，否则被选中的概率还是太高
+            if (pLevel.getGameTime() % ELECTION_INTERVAL_TICK == 0 && pLevel.random.nextFloat() < 0.01F) {
                 // 改变状态为搜寻
                 pOwner.getBrain().setMemory(RumorMemoryTypes.CHAT_STATUS.get(), ChatStatus.SEARCHING);
             }
@@ -207,7 +211,7 @@ public class MultiChat extends Behavior<Villager> {
         pEntity.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
         pEntity.getBrain().eraseMemory(RumorMemoryTypes.CHAT_CONTEXT.get());
 
-        LOGGER.debug("setting cooldown {} tick(s) with last_chat_time: {}",COOLDOWN_DURATION,pGameTime);
+        LOGGER.debug("setting cooldown {} tick(s) with last_chat_time: {}", COOLDOWN_TICKS,pGameTime);
         // 设置冷却
         pEntity.getBrain().setMemory(RumorMemoryTypes.LAST_CHAT_TIME.get(), pGameTime);
         pEntity.getBrain().setMemory(RumorMemoryTypes.CHAT_STATUS.get(), ChatStatus.COOLDOWN);

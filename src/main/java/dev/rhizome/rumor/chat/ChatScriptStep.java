@@ -1,5 +1,7 @@
 package dev.rhizome.rumor.chat;
 
+import dev.rhizome.rumor.config.RumorConfig;
+
 /**
  * 对话剧本中的一个步骤
  * @param speakerId 当前说话者的id
@@ -16,7 +18,7 @@ public record ChatScriptStep(String speakerId,
 
         // 可选参数，标记为使用默认
         if (broadcastRange == null || broadcastRange <= 0) {
-            broadcastRange = 8.0;
+            broadcastRange = RumorConfig.DEFAULT_BROADCAST_RANGE.get();
         }
     }
 }

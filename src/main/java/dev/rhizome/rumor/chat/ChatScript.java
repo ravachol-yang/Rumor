@@ -1,5 +1,7 @@
 package dev.rhizome.rumor.chat;
 
+import dev.rhizome.rumor.config.RumorConfig;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -43,7 +45,7 @@ public record ChatScript(String id,
 
         // 可选参数，标记为使用默认
         if (searchRange == null || searchRange <= 0) {
-            searchRange = 10.0;
+            searchRange = RumorConfig.DEFAULT_SEARCH_RANGE.get();
         }
 
         // 根据tick序列进行排序
