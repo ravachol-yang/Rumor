@@ -1,5 +1,8 @@
 package dev.rhizome.rumor.chat;
 
+import dev.rhizome.rumor.chat.script.ChatScript;
+import dev.rhizome.rumor.chat.script.IScriptStep;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.npc.Villager;
 
 import java.util.HashMap;
@@ -7,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 public class ChatContext {
+
+    private final ServerLevel level;
 
     private final List<Villager> members; // 聊天人员列表
     private final Map<String, Villager> memberMap; // 人员与剧本内id对应关系，用于分配角色
@@ -24,8 +29,8 @@ public class ChatContext {
     }
 
     /** 获取当前步骤*/
-    public ChatScriptStep getCurrentStep () {
-        return script.steps().get(currentStepIndex);
+    public List<IScriptStep> getCurrentSteps() {
+        return script.stepMap().get(currentStepIndex);
     }
 
     /** 步骤推进 */
@@ -52,6 +57,9 @@ public class ChatContext {
         return chatTimer;
     }
 
+    /** 获取当前世界 */
+    public ServerLevel getLevel() {return level;}
+
     /** 获取当前对话中的成员 */
     public List<Villager> getMembers() { return members; }
 
@@ -70,7 +78,8 @@ public class ChatContext {
      * @param members 对话成员
      * @param script 使用的剧本
      */
-    public ChatContext(List<Villager> members, ChatScript script) {
+    public ChatContext(ServerLevel level, List<Villager> members, ChatScript script) {
+        this.level = level;
         this.members = members;
         this.script = script;
 

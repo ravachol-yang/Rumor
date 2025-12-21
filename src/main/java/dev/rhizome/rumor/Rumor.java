@@ -2,7 +2,7 @@ package dev.rhizome.rumor;
 
 import com.mojang.logging.LogUtils;
 import dev.rhizome.rumor.ai.memory.RumorMemoryTypes;
-import dev.rhizome.rumor.chat.ChatScriptManager;
+import dev.rhizome.rumor.chat.script.ChatScriptManager;
 import dev.rhizome.rumor.config.RumorConfig;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;

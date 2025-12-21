@@ -1,9 +1,10 @@
-package dev.rhizome.rumor.chat;
+package dev.rhizome.rumor.chat.script;
 
 import dev.rhizome.rumor.config.RumorConfig;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -12,13 +13,15 @@ import java.util.stream.Collectors;
  * 自动计算相关信息
  * @param id 剧本id
  * @param steps 步骤列表
+ * @param stepMap tick与多个步骤的映射
  * @param weight 随机选择剧本时的权重
  * @param searchRange 搜索成员的范围 (输入null为默认)
  * @param uniqueIds 不重复的角色列表，用于判断所需人数和分配角色 (输入null自动计算)
  * @param totalTicks 总时长，用于判断何时结束 (输入null自动计算)
  */
 public record ChatScript(String id,
-                         List<ChatScriptStep> steps,
+                         List<IScriptStep> steps,
+                         Map<Integer, List<IScriptStep>> stepMap,
                          int weight,
                          Double searchRange,
                          Set<String> uniqueIds,
@@ -33,11 +36,11 @@ public record ChatScript(String id,
      * @param searchRange 搜索成员的范围, 输入null为默认
      */
     public ChatScript (String id,
-                       List<ChatScriptStep> steps,
+                       List<IScriptStep> steps,
                        int weight,
                        Double searchRange){
 
-        this(id,new java.util.ArrayList<>(steps),weight,searchRange,null, 0);
+        this(id,new java.util.ArrayList<>(steps),null,weight,searchRange,null, 0);
     }
 
     // 进行初始化，计算其他参数
@@ -48,21 +51,24 @@ public record ChatScript(String id,
             searchRange = RumorConfig.DEFAULT_SEARCH_RANGE.get();
         }
 
-        // 根据tick序列进行排序
-        // 不重要但是也许真的会有人把顺序乱排()
-        // 还是重新加工一下吧
-        steps.sort(Comparator.comparingInt(ChatScriptStep::triggerTick));
+        // 把tick和其对应的多个步骤分组
+        if (stepMap == null) {
+            stepMap = steps.stream()
+                    .collect(Collectors.groupingBy(IScriptStep::getTriggerTick));
+        }
 
         // 计算不重复的角色数量
         if (uniqueIds == null) {
             uniqueIds = steps.stream()
-                    .map(ChatScriptStep::speakerId)
+                    .map(IScriptStep::getActorId)
                     .collect(Collectors.toCollection(java.util.LinkedHashSet::new));
         }
 
         // 计算总时长，加一点点缓冲
         if (!steps.isEmpty() && totalTicks <= 0) {
-            totalTicks = steps.get(steps.size() - 1).triggerTick() + 30;
+            totalTicks = stepMap.keySet().stream()
+                    .max(Integer::compare).orElse(0)
+            + 20;
         }
     }
 }

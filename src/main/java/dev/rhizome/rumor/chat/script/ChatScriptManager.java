@@ -1,8 +1,10 @@
-package dev.rhizome.rumor.chat;
+package dev.rhizome.rumor.chat.script;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.mojang.logging.LogUtils;
+import dev.rhizome.rumor.util.gson.RuntimeTypeAdapterFactory;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -18,7 +20,15 @@ public class ChatScriptManager  extends SimpleJsonResourceReloadListener {
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    private static final Gson GSON = new Gson(); // 使用Gson, 官方自带的方案
+    // gson默认不支持多态，需要使用gson-extras中的内容
+    private static final RuntimeTypeAdapterFactory<IScriptStep> STEP_ADAPTER =
+            RuntimeTypeAdapterFactory.of(IScriptStep.class, "type")
+                    .registerSubtype(MessageStep.class, "message");
+
+    private static final Gson GSON = new GsonBuilder()
+            .registerTypeAdapterFactory(STEP_ADAPTER)
+            .create(); // 使用Gson, 官方自带的方案
+
     private static final List<ChatScript> REGISTERED_SCRIPTS = new ArrayList<>(); // 剧本注册到一个列表中
 
     public ChatScriptManager() {

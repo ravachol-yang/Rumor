@@ -4,6 +4,9 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.logging.LogUtils;
 import dev.rhizome.rumor.ai.memory.RumorMemoryTypes;
 import dev.rhizome.rumor.chat.*;
+import dev.rhizome.rumor.chat.script.ChatScript;
+import dev.rhizome.rumor.chat.script.ChatScriptManager;
+import dev.rhizome.rumor.chat.script.IScriptStep;
 import dev.rhizome.rumor.config.RumorConfig;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -94,7 +97,7 @@ public class VillagerChat extends Behavior<Villager> {
             if (participants.isPresent()) {
                 // 成功则发起聊天
                 participants.get().add(0,pOwner);
-                initChat(participants.get(), script);
+                initChat(pLevel,participants.get(), script);
                 return true;
             } else {
                 // 搜寻失败，退回等待状态
@@ -182,16 +185,11 @@ public class VillagerChat extends Behavior<Villager> {
                 pOwner.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
             }
 
-            ChatScriptStep step = ctx.getCurrentStep();
+            List<IScriptStep> steps = ctx.getCurrentSteps();
 
             // 当前步骤的tick为当前tick，需要推进
-            if (step != null && step.triggerTick() == ctx.getCurrentTick()) {
-
-                // 如果轮到自己，就发言
-                if (pOwner == ctx.getMemberMap().get(step.speakerId())) {
-                    broadcastMessage(pLevel, pOwner, step.text(), step.broadcastRange());
-                    ctx.nextStep(); // 推进剧本
-                }
+            if (steps != null && steps.get(0).getTriggerTick() == ctx.getCurrentTick()) {
+                // TODO
             }
 
             // 组长（第0个成员）负责控制计时器
@@ -260,10 +258,10 @@ public class VillagerChat extends Behavior<Villager> {
      * @param participants 聊天参与者, 第一个会成为Leader
      * @param script 剧本
      */
-    private void initChat(List<Villager> participants, ChatScript script) {
+    private void initChat(ServerLevel level,List<Villager> participants, ChatScript script) {
 
         // 初始化对话上下文
-        ChatContext ctx = new ChatContext(participants,script);
+        ChatContext ctx = new ChatContext(level,participants,script);
 
         LOGGER.debug("Chat context initiated, script: [{}]; participants count: {}", script.id(), participants.size());
 
