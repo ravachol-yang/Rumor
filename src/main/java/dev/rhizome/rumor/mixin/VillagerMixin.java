@@ -1,9 +1,12 @@
 package dev.rhizome.rumor.mixin;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.datafixers.util.Pair;
+import dev.rhizome.rumor.ai.activity.RumorActivity;
 import dev.rhizome.rumor.ai.behavior.VillagerChat;
 import dev.rhizome.rumor.ai.memory.RumorMemoryTypes;
 import net.minecraft.world.entity.ai.Brain;
+import net.minecraft.world.entity.ai.behavior.DoNothing;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.ai.sensing.SensorType;
@@ -29,7 +32,6 @@ public class VillagerMixin {
         cir.setReturnValue(Brain.provider(
                 new ImmutableList.Builder<MemoryModuleType<?>>()
                         .addAll(MEMORY_TYPES)
-                        .add(RumorMemoryTypes.CHAT_STATUS.get())
                         .add(RumorMemoryTypes.CHAT_CONTEXT.get())
                         .add(RumorMemoryTypes.LAST_CHAT_TIME.get())
                         .build(),
@@ -38,6 +40,10 @@ public class VillagerMixin {
 
     @Inject(method = "registerBrainGoals", at = @At("TAIL"))
     private void injectBehavior (Brain<Villager> pVillagerBrain, CallbackInfo ci) {
+        pVillagerBrain.addActivity(RumorActivity.CHAT.get(), ImmutableList.of(
+                Pair.of(0, new VillagerChat()),
+                Pair.of(1, new DoNothing(20,40))
+        ));
         pVillagerBrain.addActivity(Activity.IDLE,5, ImmutableList.of(new VillagerChat()));
     }
 }

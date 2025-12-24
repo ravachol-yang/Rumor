@@ -2,7 +2,6 @@ package dev.rhizome.rumor.ai.memory;
 
 import dev.rhizome.rumor.Rumor;
 import dev.rhizome.rumor.chat.ChatContext;
-import dev.rhizome.rumor.chat.ChatStatus;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -15,10 +14,6 @@ public class RumorMemoryTypes {
 
     public static final DeferredRegister<MemoryModuleType<?>> MEMORY_TYPES =
             DeferredRegister.create(ForgeRegistries.MEMORY_MODULE_TYPES, Rumor.MODID);
-
-    /** 聊天状态枚举 */
-    public static final RegistryObject<MemoryModuleType<ChatStatus>> CHAT_STATUS =
-            MEMORY_TYPES.register("chat_status", () -> new MemoryModuleType<>(Optional.empty()));
 
     /** 对话上下文 */
     public static final RegistryObject<MemoryModuleType<ChatContext>> CHAT_CONTEXT =

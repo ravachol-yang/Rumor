@@ -1,4 +1,4 @@
-package dev.rhizome.rumor.config;
+package dev.rhizome.rumor;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 

@@ -1,9 +1,9 @@
 package dev.rhizome.rumor;
 
 import com.mojang.logging.LogUtils;
+import dev.rhizome.rumor.ai.activity.RumorActivity;
 import dev.rhizome.rumor.ai.memory.RumorMemoryTypes;
 import dev.rhizome.rumor.chat.script.ChatScriptManager;
-import dev.rhizome.rumor.config.RumorConfig;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -31,6 +31,7 @@ public class Rumor {
 
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
+        RumorActivity.register(modEventBus);
         RumorMemoryTypes.register(modEventBus);
 
         // Register the commonSetup method for modloading
@@ -38,6 +39,7 @@ public class Rumor {
 
         // 注册资源加载监听器
         MinecraftForge.EVENT_BUS.addListener(this::onAddReloadListeners);
+        MinecraftForge.EVENT_BUS.register(RumorCommands.class);
 
         // 注册配置加载器
         FMLJavaModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, RumorConfig.SPEC);

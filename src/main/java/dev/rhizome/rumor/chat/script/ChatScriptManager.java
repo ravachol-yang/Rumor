@@ -21,9 +21,13 @@ public class ChatScriptManager  extends SimpleJsonResourceReloadListener {
     private static final Logger LOGGER = LogUtils.getLogger();
 
     // gson默认不支持多态，需要使用gson-extras中的内容
-    private static final RuntimeTypeAdapterFactory<IScriptStep> STEP_ADAPTER =
-            RuntimeTypeAdapterFactory.of(IScriptStep.class, "type")
-                    .registerSubtype(MessageStep.class, "message");
+    private static final RuntimeTypeAdapterFactory<IAction> STEP_ADAPTER =
+            RuntimeTypeAdapterFactory.of(IAction.class, "type")
+                    .registerSubtype(MessageAction.class, "message")
+                    .registerSubtype(LookAtAction.class,"look_at")
+                    .registerSubtype(ExpAction.class,"exp")
+                    .registerSubtype(AnimationAction.class, "animation")
+                    .registerSubtype(JumpAction.class, "jump");
 
     private static final Gson GSON = new GsonBuilder()
             .registerTypeAdapterFactory(STEP_ADAPTER)
@@ -42,13 +46,30 @@ public class ChatScriptManager  extends SimpleJsonResourceReloadListener {
         REGISTERED_SCRIPTS.clear();
         pObject.forEach((location, json) -> {
             try {
-                ChatScript script = GSON.fromJson(json, ChatScript.class);
+                ChatScript rawScript = GSON.fromJson(json, ChatScript.class);
+                ChatScript script = rawScript.withLocation(location);
                 REGISTERED_SCRIPTS.add(script);
+                LOGGER.info("registered script: {}", script.location());
             } catch (Exception e) {
                 LOGGER.error("failed processing json file: {}", location, e);
             }
         });
         LOGGER.info("Loaded {} scripts", REGISTERED_SCRIPTS.size());
+    }
+
+    /** 获取已经注册的剧本列表 */
+    public static Iterable<ResourceLocation> getRegisteredIds() {
+        return REGISTERED_SCRIPTS.stream()
+                .map(ChatScript::location)
+                .toList();
+    }
+
+    /** 根据 id 查找剧本 */
+    public static ChatScript getScript(ResourceLocation location) {
+        return REGISTERED_SCRIPTS.stream()
+                .filter(s -> s.location().equals(location))
+                .findFirst()
+                .orElse(null);
     }
 
     /**

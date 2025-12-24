@@ -9,12 +9,12 @@ import net.minecraft.world.entity.npc.Villager;
  * 目前是直接投放，任何人都可以领到
  * @param actorId 当前步骤主体的id
  * @param amount 经验数量
- * @param triggerTick 当前步骤执行的时间节点
+ * @param durationTicks 当前步骤持续的时长
  */
-public record ExpStep(String actorId,
-                      int amount,
-                      int triggerTick)
-        implements IScriptStep {
+public record ExpAction(String actorId,
+                        int amount,
+                        int durationTicks)
+        implements IAction {
 
     @Override
     public String getActorId() {
@@ -22,13 +22,15 @@ public record ExpStep(String actorId,
     }
 
     @Override
-    public int getTriggerTick() {
-        return triggerTick;
+    public int getDurationTicks() {
+        return durationTicks;
     }
 
     @Override
-    public void exec(Villager actor, ChatContext ctx) {
+    public void apply(ChatContext ctx) {
         if (amount <= 0) return;
+
+        Villager actor = ctx.getMemberMap().get(actorId);
 
         // 创建一个位置和当前村民相同的经验球并投放
         ExperienceOrb expOrb = new ExperienceOrb(ctx.getLevel(),

@@ -1,11 +1,220 @@
 {
-  "id": "default",
   "weight": 100,
-  "searchRange": 30,
+  "searchRange": 30.0,
+  "roles": {
+    "rumor": "§eRumor§r",
+    "v1": "§eAlice§r",
+    "v2": "§eBob§r",
+    "v3": "§eCindy§r"
+  },
   "steps": [
-    {"speakerId": "leader", "text":  "111", "triggerTick":  20},
-    {"speakerId": "v0", "text":  "222", "triggerTick":  60},
-    {"speakerId": "v1", "text":  "333", "triggerTick":  100},
-    {"speakerId": "leader", "text":  "444", "triggerTick":  120}
+    {
+      "durationTicks": 60,
+      "actions": [
+        {
+          "type": "message",
+          "actorId": "rumor",
+          "message": "Hello, World! 欢迎使用Rumor模组",
+          "broadcastRange": 15.0
+        },
+        {
+          "type": "animation",
+          "actorId": "rumor",
+          "eventId": 14
+        }
+      ]
+    },
+    {
+      "durationTicks": 60,
+      "actions": [
+        {
+          "type": "message",
+          "actorId": "v1",
+          "message": "这是什么?",
+          "broadcastRange": 15.0
+        },
+        {
+          "type": "look_at",
+          "actorId": "v1",
+          "targetId": "rumor"
+        },
+        {
+          "type": "jump",
+          "actorId": "v1"
+        }
+      ]
+    },
+    {
+      "durationTicks": 60,
+      "actions": [
+        {
+          "type": "message",
+          "actorId": "rumor",
+          "message": "Rumor给Minecraft提供基于剧本的背景叙事功能",
+          "broadcastRange": 15.0
+        },
+        {
+          "type": "look_at",
+          "actorId": "rumor",
+          "targetId": "v1"
+        }
+      ]
+    },
+    {
+      "durationTicks": 60,
+      "actions": [
+        {
+          "type": "message",
+          "actorId": "rumor",
+          "message": "可以让空闲的村民随机聚在一起对话，目前支持 话语，跳跃,眼神，粒子效果，投放经验球 等功能",
+          "broadcastRange": 15.0
+        },
+        {
+          "type": "look_at",
+          "actorId": "rumor",
+          "targetId": "v1"
+        }
+      ]
+    },
+    {
+      "durationTicks": 60,
+      "actions": [
+        {
+          "type": "message",
+          "actorId": "v2",
+          "message": "这个模组有什么意义？",
+          "broadcastRange": 15.0
+        },
+        {
+          "type": "look_at",
+          "actorId": "v2",
+          "targetId": "rumor"
+        },
+        {
+          "type": "jump",
+          "actorId": "v2"
+        }
+      ]
+    },
+    {
+      "durationTicks": 60,
+      "actions": [
+        {
+          "type": "message",
+          "actorId": "rumor",
+          "message": "背景叙事可以让玩家通过npc之间的对话更自然地了解剧情，任务Tips等",
+          "broadcastRange": 15.0
+        },
+        {
+          "type": "look_at",
+          "actorId": "rumor",
+          "targetId": "v2"
+        }
+      ]
+    },
+    {
+      "durationTicks": 60,
+      "actions": [
+        {
+          "type": "message",
+          "actorId": "rumor",
+          "message": "例如对剧情类整合包作者就很有用",
+          "broadcastRange": 15.0
+        },
+        {
+          "type": "look_at",
+          "actorId": "rumor",
+          "targetId": "v2"
+        }
+      ]
+    },
+    {
+      "durationTicks": 60,
+      "actions": [
+        {
+          "type": "message",
+          "actorId": "v3",
+          "message": "那么如何定义剧本呢",
+          "broadcastRange": 15.0
+        },
+        {
+          "type": "look_at",
+          "actorId": "v3",
+          "targetId": "rumor"
+        },
+        {
+          "type": "animation",
+          "actorId": "v3",
+          "eventId": 14
+        }
+      ]
+    },
+    {
+      "durationTicks": 60,
+      "actions": [
+        {
+          "type": "message",
+          "actorId": "rumor",
+          "message": "剧本是定义在json文件中，作为数据包加载",
+          "broadcastRange": 15.0
+        },
+        {
+          "type": "look_at",
+          "actorId": "rumor",
+          "targetId": "v3"
+        }
+      ]
+    },
+    {
+      "durationTicks": 60,
+      "actions": [
+        {
+          "type": "message",
+          "actorId": "v3",
+          "message": "真有意思...",
+          "broadcastRange": 15.0
+        },
+        {
+          "type": "look_at",
+          "actorId": "v3",
+          "targetId": "rumor"
+        },
+        {
+          "type": "animation",
+          "actorId": "v3",
+          "eventId": 12
+        }
+      ]
+    },
+    {
+      "durationTicks": 20,
+      "actions": [
+        {
+          "type": "exp",
+          "actorId": "rumor",
+          "amount": 10
+        },
+        {
+          "type": "animation",
+          "actorId": "rumor",
+          "eventId": 14
+        },
+        {
+          "type": "animation",
+          "actorId": "v1",
+          "eventId": 14
+        },
+        {
+          "type": "animation",
+          "actorId": "v2",
+          "eventId": 14
+        },
+        {
+          "type": "animation",
+          "actorId": "v3",
+          "eventId": 14
+        }
+      ]
+    }
   ]
 }

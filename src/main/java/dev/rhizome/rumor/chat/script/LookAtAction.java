@@ -9,26 +9,27 @@ import net.minecraft.world.entity.npc.Villager;
  * 一个角色看向另一个角色的步骤
  * @param actorId 当前步骤主体的id
  * @param targetId 看向的目标id
- * @param triggerTick 当前步骤执行的时间节点
+ * @param durationTicks 当前步骤持续的时长
  */
-public record LookAtStep(String actorId,
-                         String targetId,
-                         int triggerTick)
-        implements IScriptStep {
+public record LookAtAction(String actorId,
+                           String targetId,
+                           int durationTicks)
+        implements IAction {
     @Override
     public String getActorId() {
         return actorId;
     }
 
     @Override
-    public int getTriggerTick() {
-        return triggerTick;
+    public int getDurationTicks() {
+        return durationTicks;
     }
 
     @Override
-    public void exec(Villager actor, ChatContext ctx) {
+    public void apply(ChatContext ctx) {
+        Villager actor = ctx.getMemberMap().get(actorId);
         Villager target = ctx.getMemberMap().get(targetId);
-        if (target != null) {
+        if (actor != null && target != null) {
             // 设置看向目标
             actor.getBrain().setMemory(MemoryModuleType.LOOK_TARGET, new EntityTracker(target, true));
         }
