@@ -35,10 +35,7 @@ public class VillagerChat extends Behavior<Villager> {
     private static final int COOLDOWN_TICKS = RumorConfig.COOLDOWN.get() * 20;
 
     /**
-     * 检查行为启动条件
-     * 按照状态进行检查和更新
-     * 依次为冷却，聊天，等待，搜索
-     * TODO 对于状态的判断不够优雅
+     * 检查行为启动条件，并抽取对话发起者
      */
     @Override
     protected boolean checkExtraStartConditions(@NotNull ServerLevel pLevel, @NotNull Villager pOwner) {
@@ -93,11 +90,7 @@ public class VillagerChat extends Behavior<Villager> {
     }
 
     /**
-     * 每一个tick的行为
-     * 先由组长判断初始状态是否达成，并决定是否开始剧本
-     * 通过检查上下文中的当前tick与当前步骤的tick是否一致进行对话
-     * 对话的第0个成员负责调用上下文的tick()推进时间
-     * 在时间到达后结束并各自进行清理
+     * 每一个tick的具体行动
      */
     @Override
     protected void tick(@NotNull ServerLevel pLevel, @NotNull Villager pOwner, long pGameTime) {
