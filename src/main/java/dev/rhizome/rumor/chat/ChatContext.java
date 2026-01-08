@@ -39,8 +39,6 @@ public class ChatContext {
 
     public ServerLevel getLevel() {return level;}
 
-    public List<Villager> getMembers() { return members; }
-
     public Map<String, Villager> getMemberMap() {
         return memberMap;
     }
@@ -57,39 +55,40 @@ public class ChatContext {
      * 负责更新上下文状态
      * 应当每tick执行一次 */
     public void tick() {
-        if (status.equals(Status.RECRUITING)) recruit();
 
-        if (status.equals(Status.GATHERING)) checkReady();
+        switch (status) {
+            case RECRUITING -> recruit();
+            case GATHERING -> checkReady();
+            case ACTIVE -> {
+                // 获取当前步骤
+                Step step = script.steps().get(currentStepIndex);
 
-        if (!status.equals(Status.ACTIVE)) return;
+                // 在step开始时，由各个action更新上下文状态
+                if (stepTicks == 0) {
+                    step.exec(this);
+                }
 
-        // 获取当前步骤
-        Step step = script.steps().get(currentStepIndex);
+                stepTicks++;
 
-        // 在step开始时，由各个action更新上下文状态
-        if (stepTicks == 0) {
-            step.exec(this);
-        }
+                // 下面是每tick需要维护与更新的上下文状态
 
-        stepTicks++;
+                // 遍历lookAt覆盖，管理计时器，并移除过期的
+                lookAtOverrides.entrySet().removeIf(e -> {
+                    e.getValue().decrement();
+                    return e.getValue().isExpired();
+                });
 
-        // 下面是每tick需要维护与更新的上下文状态
+                // 检测step与上下文的结束
+                if (stepTicks >= step.durationTicks()) {
 
-        // 遍历lookAt覆盖，管理计时器，并移除过期的
-        lookAtOverrides.entrySet().removeIf(e -> {
-            e.getValue().decrement();
-            return e.getValue().isExpired();
-        });
+                    stepTicks = 0;
+                    currentStepIndex++;
 
-        // 检测step与上下文的结束
-        if (stepTicks >= step.durationTicks()) {
-
-            stepTicks = 0;
-            currentStepIndex++;
-
-            if (currentStepIndex >= script.steps().size()) {
-                restoreNames();
-                status = Status.FINISHED;
+                    if (currentStepIndex >= script.steps().size()) {
+                        restoreNames();
+                        status = Status.FINISHED;
+                    }
+                }
             }
         }
     }
@@ -130,6 +129,10 @@ public class ChatContext {
         level.players().stream()
                 .filter(p -> p.blockPosition().distSqr(centerPos) <= range * range)
                 .forEach(p -> p.sendSystemMessage(text,true));
+    }
+
+    public void setLookAtOverride(Villager actor,Villager target, int duration) {
+        this.lookAtOverrides.put(actor, new LookAtOverride(target, duration));
     }
 
     /**

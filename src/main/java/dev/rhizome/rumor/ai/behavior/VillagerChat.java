@@ -109,43 +109,43 @@ public class VillagerChat extends Behavior<Villager> {
 
         ChatContext.Status status = ctx.getStatus();
 
-        // 正在招募
-        if (status.equals(ChatContext.Status.RECRUITING)) {
-
-            // 每半秒发送粒子效果
-            if (pGameTime % 10 == 0) {
-                pLevel.sendParticles(ParticleTypes.NOTE,
-                        pOwner.getX(), pOwner.getY() + 2.5, pOwner.getZ(),
-                        1, 0, 0, 0, 1.0);
+        // 判断上下文状态
+        switch (status) {
+            // 正在招募
+            case RECRUITING -> {
+                // 每半秒发送粒子效果
+                if (pGameTime % 10 == 0) {
+                    pLevel.sendParticles(ParticleTypes.NOTE,
+                            pOwner.getX(), pOwner.getY() + 2.5, pOwner.getZ(),
+                            1, 0, 0, 0, 1.0);
+                }
             }
-        }
-
-        // 正在靠拢
-        if (status.equals(ChatContext.Status.GATHERING)) {
-            // 设置高亮效果提示玩家
-            pOwner.setGlowingTag(true);
-            if (pOwner.blockPosition().distSqr(ctx.getCenterPos()) > 3.0D * 3.0D ) {
-                BehaviorUtils.setWalkAndLookTargetMemories(pOwner, ctx.getCenterPos(), 0.5F, 1);
+            // 正在靠拢
+            case GATHERING -> {
+                // 设置高亮效果提示玩家
+                pOwner.setGlowingTag(true);
+                if (pOwner.blockPosition().distSqr(ctx.getCenterPos()) > 3.0D * 3.0D ) {
+                    BehaviorUtils.setWalkAndLookTargetMemories(pOwner, ctx.getCenterPos(), 0.5F, 1);
+                }
             }
-            return;
+            // 对话正在活动
+            case ACTIVE -> {
+                // 防止东张西望
+                pOwner.getBrain().eraseMemory(MemoryModuleType.INTERACTION_TARGET);
+
+                // 从上下文获取当前村民视线状态并更新
+                Villager lookTarget = ctx.getLookAt(pOwner);
+                Villager currentSpeaker = ctx.getCurrentSpeaker();
+                if (lookTarget != null) BehaviorUtils.lookAtEntity(pOwner, lookTarget);
+                pOwner.setGlowingTag(pOwner == currentSpeaker);
+
+                // 对话阶段防止走动
+                pOwner.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
+                pOwner.getBrain().eraseMemory(MemoryModuleType.PATH);
+            }
+            // 对话已经完成, 移除上下文, 下一tick进入清理
+            case FINISHED -> pOwner.getBrain().eraseMemory(RumorMemoryTypes.CHAT_CONTEXT.get());
         }
-
-
-        // 防止东张西望
-        pOwner.getBrain().eraseMemory(MemoryModuleType.INTERACTION_TARGET);
-
-        // 从上下文获取当前村民视线状态并更新
-        Villager lookTarget = ctx.getLookAt(pOwner);
-        Villager currentSpeaker = ctx.getCurrentSpeaker();
-        if (lookTarget != null) BehaviorUtils.lookAtEntity(pOwner, lookTarget);
-        pOwner.setGlowingTag(pOwner == currentSpeaker);
-
-        // 对话阶段防止走动
-        pOwner.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
-        pOwner.getBrain().eraseMemory(MemoryModuleType.PATH);
-
-        // 检查对话是否已完成
-        if (status.equals(ChatContext.Status.FINISHED)) stop(pLevel, pOwner, pGameTime);
     }
 
     /**

@@ -1,8 +1,6 @@
 package dev.rhizome.rumor.chat.script;
 
 import dev.rhizome.rumor.chat.ChatContext;
-import net.minecraft.world.entity.ai.behavior.EntityTracker;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.npc.Villager;
 
 /**
@@ -31,7 +29,7 @@ public record LookAtAction(String actorId,
         Villager target = ctx.getMemberMap().get(targetId);
         if (actor != null && target != null) {
             // 设置看向目标
-            actor.getBrain().setMemory(MemoryModuleType.LOOK_TARGET, new EntityTracker(target, true));
+            ctx.setLookAtOverride(actor,target,durationTicks);
         }
     }
 }
